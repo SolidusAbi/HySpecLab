@@ -1,0 +1,3 @@
+[submodule "modules/SPy"]
+	path = modules/SPy
+	url = https://github.com/spectralpython/spectral.git
