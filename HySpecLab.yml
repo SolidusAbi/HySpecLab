@@ -1,4 +1,4 @@
-name: hyperspectral
+name: HySpecLab
 channels:
   - conda-forge
   - defaults
