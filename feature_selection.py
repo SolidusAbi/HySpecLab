@@ -35,6 +35,11 @@ class FeatureSelection(TransformerMixin, BaseEstimator):
     #         setattr(self, parameter, value)
     #     return self
 
+    def getIndex(self):
+        if self.selected_features:
+            feature_idx = format(self.selected_features, "b").zfill(self.n_features)
+            return np.array(list(map(int, feature_idx)), dtype=np.bool_)
+
     def fit(self, X, y=None):
         self.n_features = X.shape[1]
         # self.selected_features_idx = np.linspace(0, n_features-1, self.n_features_to_select, dtype=int)

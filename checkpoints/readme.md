@@ -1,0 +1,3 @@
+# Checkpoints
+
+The optimization checkpoints are stored here...
