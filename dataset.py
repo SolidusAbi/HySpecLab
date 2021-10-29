@@ -1,5 +1,6 @@
 import os 
 import numpy as np
+import pandas as pd
 from scipy.io import loadmat
 
 class DermaDataset:
@@ -35,6 +36,7 @@ class DermaDataset:
         for idx, filename in enumerate(filenames):
             mat = loadmat(filename)
             mat_x = mat['preProcessedImage']
+            # mat_x = mat['calibratedHsCube']
             mat_y = mat['groundTruthMap']
 
             benign_idx = np.where(np.logical_and(mat_y>200, mat_y<400))
@@ -51,7 +53,13 @@ class DermaDataset:
                 self.x = np.concatenate([self.x, mat_x[result_idx]], axis=0)    
                 self.y = np.concatenate([self.y, _y], axis=0)
 
-    def get(self):
+    def get(self, dataframe=False):
+        if dataframe:
+            return pd.DataFrame(self.x, columns=list(
+                    map(lambda x: "Band {}".format(x), np.arange(1, self.x.shape[1]+1))
+                )), pd.DataFrame(self.y, columns=['Target'])
+            
+
         return self.x, self.y
 
 # class Dataset:

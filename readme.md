@@ -1,8 +1,5 @@
+# Dependencies
+    * Statsmodels
 
-Benigno
-
-100 ->
-200 -> Benigno 
-300 -> Desconocido (pasar a benigno)
-
-Añadir la penalización por bandas!
+    * scikit-learn
+        * version: 0.23
