@@ -75,7 +75,7 @@ class InterbandRedundancySelector(BaseEstimator, SelectorMixin):
             features_selected = features_available[features_selected_idx]
             self.mask_[features_selected] = 1
             
-            band_redundancy = tuple(map(lambda x: selector._clusterize(x, features_available), features_selected))
+            band_redundancy = tuple(map(lambda x: self._clusterize(x, features_available), features_selected))
             band_redundancy = np.unique(np.concatenate(band_redundancy))
 
             # Remove features selected and those which have high-multicollinearity
