@@ -1,0 +1,3 @@
+[submodule "modules/IPDL"]
+	path = modules/IPDL
+	url = git@github.com:SolidusAbi/IPDL.git
