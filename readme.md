@@ -9,7 +9,7 @@ Laboratory for the use of algorithms in HyperSpectral imagery.
 ## Submodules
 This repository contains the following submodules:
 
-* [IPDL](git@github.com:SolidusAbi/IPDL.git)
+* [IPDL](https://github.com/SolidusAbi/IPDL)
 
 In order to **download the submodules** in the cloning process, use the following instruction:
 ``` Bash
