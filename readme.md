@@ -27,6 +27,9 @@ git clone --recurse-submodules git@github.com:mt4sd/ThermalAnalysis.git
     * version 0.23
 1. [Scikit-Optimize](https://anaconda.org/conda-forge/scikit-optimize)
     * version 0.8.1
+1. [Imbalanced learn](https://anaconda.org/conda-forge/imbalanced-learn)
+    * version 0.7
+
 1. Others:
     * Matplotlib...
 
