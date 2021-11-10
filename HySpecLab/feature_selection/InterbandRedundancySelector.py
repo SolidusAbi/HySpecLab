@@ -56,17 +56,9 @@ class InterbandRedundancySelector(BaseEstimator, SelectorMixin):
                 Returns the instance itself.
         '''
 
-        n_features = X.shape[1]
-        reg_score = np.zeros((n_features, n_features)) # Coefficient of determination of predictions per feature
-        for independent_feature_idx in np.arange(n_features):
-            for dependent_feature_idx in np.arange(independent_feature_idx, n_features):
-                model = OLS(X[:, independent_feature_idx], X[:, dependent_feature_idx])
-                results = model.fit()
-                reg_score[independent_feature_idx, dependent_feature_idx] = results.rsquared
-                reg_score[dependent_feature_idx, independent_feature_idx] = results.rsquared
-
-        self.vif_ = 1 / (1 - reg_score + 1e-8)
+        self.vif_ = self._vif_estimation(X)
         
+        n_features = X.shape[1]
         features_available = np.arange(0, n_features)
         self.mask_ = np.zeros(features_available.size, dtype=np.uint)
 
@@ -84,6 +76,31 @@ class InterbandRedundancySelector(BaseEstimator, SelectorMixin):
             features_selected_idx = np.linspace(0, features_available.size, 5, dtype=np.uint)[1:-1]
 
         return self
+
+    def _vif_estimation(self, X):
+        '''
+            Parameters
+            ----------
+                X : array, shape (n_samples, n_features)
+                    Data from which to compute the VIF between different features, where `n_samples` is
+                    the number of samples and `n_features` is the number of features.
+
+            Returns
+            -------
+                vif : array, shape (n_features, n_features) 
+                    VIF estimation between features.
+        '''
+        n_features = X.shape[1]
+        reg_score = np.zeros((n_features, n_features)) # Coefficient of determination of predictions per feature
+
+        for independent_feature_idx in np.arange(n_features):
+            for dependent_feature_idx in np.arange(independent_feature_idx, n_features):
+                model = OLS(X[:, independent_feature_idx], X[:, dependent_feature_idx])
+                results = model.fit()
+                reg_score[independent_feature_idx, dependent_feature_idx] = results.rsquared
+                reg_score[dependent_feature_idx, independent_feature_idx] = results.rsquared
+
+        return 1 / (1 - reg_score + 1e-8)
 
     def _clusterize(self, independent_var: int, dependent_vars: np.ndarray):
         '''
