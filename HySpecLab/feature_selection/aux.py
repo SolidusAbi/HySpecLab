@@ -1,6 +1,10 @@
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
+'''
+    Auxiliarity Selectors
+'''
+
 class FeatureEquidistantSelection(TransformerMixin, BaseEstimator):
     def __init__(self, n_features_to_select=None):
         self.n_features_to_select = n_features_to_select
