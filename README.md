@@ -29,7 +29,7 @@ git clone --recurse-submodules git@github.com:mt4sd/ThermalAnalysis.git
     * version 0.8.1
 1. [Imbalanced learn](https://anaconda.org/conda-forge/imbalanced-learn)
     * version 0.7
-1.[Spectral](https://anaconda.org/conda-forge/spectral)
+1. [Spectral](https://anaconda.org/conda-forge/spectral)
     * version 0.22
 1. Others:
     * Matplotlib...
