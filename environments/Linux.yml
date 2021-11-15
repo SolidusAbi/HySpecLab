@@ -1,5 +1,7 @@
 name: HySpecLab
 channels:
+  - pytorch
+  - conda-forge
   - defaults
 dependencies:
   - fontconfig==2.13.1=h6c09931_0

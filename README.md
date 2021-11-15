@@ -25,6 +25,7 @@ git clone --recurse-submodules git@github.com:mt4sd/ThermalAnalysis.git
     * version 0.12.2
 1. [Scikit-Learn](https://anaconda.org/anaconda/scikit-learn)
     * version 0.23
+    * Recommended to install ***scikit-learn-intelex*** package
 1. [Scikit-Optimize](https://anaconda.org/conda-forge/scikit-optimize)
     * version 0.8.1
 1. [Imbalanced learn](https://anaconda.org/conda-forge/imbalanced-learn)
