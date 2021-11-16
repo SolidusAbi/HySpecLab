@@ -13,7 +13,7 @@ This repository contains the following submodules:
 
 In order to **download the submodules** in the cloning process, use the following instruction:
 ``` Bash
-git clone --recurse-submodules git@github.com:mt4sd/ThermalAnalysis.git
+git clone --recurse-submodules git@github.com:SolidusAbi/HySpecLab.git
 ```
 
 ## Dependencies
