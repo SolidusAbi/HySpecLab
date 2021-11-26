@@ -33,7 +33,7 @@ git clone --recurse-submodules git@github.com:SolidusAbi/HySpecLab.git
 1. [Spectral](https://anaconda.org/conda-forge/spectral)
     * version 0.22
 1. Others:
-    * Matplotlib...
+    * Matplotlib, tensorboard, tqdm...
 
 ## Export Environment
 If you have included a new library in your environment, please update the *environment* using the following command:
