@@ -1,3 +1,7 @@
+import numpy as np
+from scipy.ndimage import median_filter
+from tqdm import tqdm
+
 from torch.utils.tensorboard import SummaryWriter
 from skopt.space import Categorical
 
@@ -26,3 +30,32 @@ class BoardLog():
         self.step_ += 1
 
         self.test = result
+
+def HyperSpectralCalibration(hyspec_img, white_reference, dark_reference):
+    return (hyspec_img - dark_reference) / (white_reference - dark_reference + 1e-8)
+
+def apply_noise(hyspec_img):
+    if len(hyspec_img.shape) != 3:
+        raise ValueError('The has to be applied to an hyperspectral cube')
+
+    noise = np.random.normal(0, 0.05, size=hyspec_img.shape)
+    return hyspec_img.copy() + noise
+
+
+def median(hyspec_img, kernel_size=3):
+    if len(hyspec_img.shape) != 3:
+        raise ValueError('The has to be applied to an hyperspectral cube')
+    
+    n_features = hyspec_img.shape[2]
+    filtered = np.zeros(hyspec_img.shape)
+
+    features_iterator = tqdm(
+            range(n_features),
+            leave=True,
+            unit="Features",
+        )
+
+    for feature_idx in features_iterator:
+        filtered[:,:, feature_idx] = median_filter(hyspec_img[:,:, feature_idx], size=kernel_size)
+
+    return filtered
