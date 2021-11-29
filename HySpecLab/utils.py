@@ -59,3 +59,27 @@ def median(hyspec_img, kernel_size=3):
         filtered[:,:, feature_idx] = median_filter(hyspec_img[:,:, feature_idx], size=kernel_size)
 
     return filtered
+
+def plotSpectraAndMean(spectra, wv=None, figsize=(12, 6)):
+    '''
+        Parameters
+        ----------
+            spectra : array, shape (n_samples, n_features)
+                spectral signals.
+
+            wv: : array, shape (n_features)
+                Wavelenght in nanometers 
+    '''
+    from matplotlib import pyplot as plt 
+    fig, ax = plt.subplots(1,1, figsize=figsize)
+    x = spectra.T ### spectra as NBands x NSamps
+
+    wv = np.arange(len(x)) if not wv else wv
+    
+    mu = np.mean(x, axis=1)
+    ax.plot(wv, x, 'c')
+    ax.plot(wv, mu, 'r')
+    ax.set_xlabel('Wavelenght (nm)')
+    ax.set_ylabel('Reflectance')
+    
+    return fig
