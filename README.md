@@ -18,9 +18,9 @@ git clone --recurse-submodules git@github.com:SolidusAbi/HySpecLab.git
 
 ## Dependencies
 1. [PyTorch](https://anaconda.org/pytorch/pytorch) 
-    * version 1.9 or above
+    * version 1.10 or above
 1. [Torchvision](https://anaconda.org/pytorch/torchvision)
-    * version 0.10 or above
+    * version 0.11 or above
 1. [Statsmodels](https://anaconda.org/anaconda/statsmodels)
     * version 0.12.2
 1. [Scikit-Learn](https://anaconda.org/anaconda/scikit-learn)
@@ -53,3 +53,4 @@ TODO
 ## TODO
 - [ ] Setup library.
 - [ ] Fix HyperSpectralUnderSampler.
+- [ ] Use [VCA](https://github.com/Laadr/VCA.git) as endmember extraction algorithm
