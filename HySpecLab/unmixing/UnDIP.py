@@ -8,11 +8,13 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
 
         self.encode = nn.Sequential(OrderedDict([
-                ('conv_0', nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1)), 
-                ('act_0', nn.Sigmoid()), 
+                ('pad_0', nn.ReflectionPad2d(1)),
+                ('conv_0', nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=0)), 
+                ('act_0', nn.ReLU()),
                 ('pooling', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)), 
                 ('conv_1', nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)), 
-                ('act_1', nn.Sigmoid())
+                ('act_1', nn.ReLU()),
+                ('bn', nn.BatchNorm2d(out_channels)),
             ])
         )
 
@@ -25,10 +27,12 @@ class Decoder(nn.Module):
 
         self.decode = nn.Sequential(OrderedDict([
                 ('upsampling', nn.Upsample(scale_factor=2, mode='nearest')),
-                ('conv_0', nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1)),
-                ('act_0', nn.Sigmoid()),
-                ('conv_1', nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)),
-                ('act_1', nn.Sigmoid())
+                ('pad_0', nn.ReflectionPad2d(1)),
+                ('conv_0', nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=0)),
+                # ('act_0', nn.ReLU()),
+                # ('conv_1', nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)),
+                ('act_1', nn.ReLU()),
+                ('bn', nn.BatchNorm2d(out_channels)),
             ])
         )
 
@@ -45,7 +49,8 @@ class Level(nn.Module):
         if skip_channels:
             self.skip_ = nn.Sequential(OrderedDict([
                     ('conv', nn.Conv2d(in_channels, skip_channels, kernel_size=1, stride=1)),
-                    ('activation', nn.Sigmoid())
+                    ('act', nn.ReLU()),
+                    ('bn', nn.BatchNorm2d(skip_channels))
                 ])
             )
 

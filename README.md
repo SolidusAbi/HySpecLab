@@ -53,4 +53,5 @@ TODO
 ## TODO
 - [ ] Setup library.
 - [ ] Fix HyperSpectralUnderSampler.
-- [ ] Use [VCA](https://github.com/Laadr/VCA.git) as endmember extraction algorithm
+- [ ] Use [VCA](https://github.com/Laadr/VCA.git) as endmember extraction algorithm.
+- [ ] Experimenting with UnDIP with different data transformation.
