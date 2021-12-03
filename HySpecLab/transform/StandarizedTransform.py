@@ -35,3 +35,9 @@ class StandarizedTransform(TransformerMixin, BaseEstimator):
     def transform(self, X, y=None, **kwargs):
         check_is_fitted(self)
         return (X - self.means_) / self.std_
+
+    def inverse_transform(self, X):
+        std_inv = 1 / (self.std_ + 1e-16)
+        mean_inv = -self.means_ * std_inv
+
+        return (X - mean_inv) / std_inv
