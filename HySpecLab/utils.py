@@ -83,3 +83,12 @@ def plotSpectraAndMean(spectra, wv=None, figsize=(12, 6)):
     ax.set_ylabel('Reflectance')
     
     return fig
+
+def fig_to_image(fig):
+    import io
+    from PIL import Image
+    
+    buf = io.BytesIO()
+    fig.savefig(buf, format='jpeg')
+    buf.seek(0)
+    return Image.open(buf)
