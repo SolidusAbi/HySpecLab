@@ -10,11 +10,12 @@ class Encoder(nn.Module):
         self.encode = nn.Sequential(OrderedDict([
                 ('pad_0', nn.ReflectionPad2d(1)),
                 ('conv_0', nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=0)), 
-                ('act_0', nn.ReLU()),
-                ('pooling', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)), 
-                ('conv_1', nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)), 
-                ('act_1', nn.ReLU()),
-                ('bn', nn.BatchNorm2d(out_channels)),
+                ('act_0', nn.ReLU(inplace=True)),
+                ('pooling', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
+                ('bn_0', nn.BatchNorm2d(out_channels)),
+                # ('conv_1', nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)), 
+                # ('act_1', nn.ReLU()),
+                # ('bn_1', nn.BatchNorm2d(out_channels)),
             ])
         )
 
@@ -31,7 +32,7 @@ class Decoder(nn.Module):
                 ('conv_0', nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=0)),
                 # ('act_0', nn.ReLU()),
                 # ('conv_1', nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)),
-                ('act_1', nn.ReLU()),
+                ('act_1', nn.ReLU(inplace=True)),
                 ('bn', nn.BatchNorm2d(out_channels)),
             ])
         )
@@ -49,7 +50,7 @@ class Level(nn.Module):
         if skip_channels:
             self.skip_ = nn.Sequential(OrderedDict([
                     ('conv', nn.Conv2d(in_channels, skip_channels, kernel_size=1, stride=1)),
-                    ('act', nn.ReLU()),
+                    ('act', nn.ReLU(inplace=True)),
                     ('bn', nn.BatchNorm2d(skip_channels))
                 ])
             )
@@ -103,9 +104,10 @@ class UnDIP(nn.Module):
             self.prior = Level(in_channel, out_channels_inv[idx], skip_channels=skip_channels_inv[idx], deeper=(self.prior if hasattr(self, 'prior') else None) )
 
         self.unmix = nn.Sequential(OrderedDict([
-            ('conv_0', nn.Conv2d(out_channels[0], out_channels[0], kernel_size=3, stride=1, padding=1)),
-            ('act_0', nn.LeakyReLU(negative_slope=.1)),
-            ('bn_0', nn.BatchNorm2d(out_channels[0])),
+            # ('conv_0', nn.Conv2d(out_channels[0], out_channels[0], kernel_size=3, stride=1, padding=1)),
+            # # ('act_0', nn.LeakyReLU(negative_slope=.1)),
+            # ('act_0', nn.ReLU(inplace=True)),
+            # ('bn_0', nn.BatchNorm2d(out_channels[0])),
             ('ee_conv', nn.Conv2d(out_channels[0], n_endmembers, kernel_size=3, stride=1, padding=1)),
             ('ee_act', nn.Softmax(dim=1)),
         ]))
