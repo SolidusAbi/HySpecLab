@@ -32,6 +32,10 @@ git clone --recurse-submodules git@github.com:SolidusAbi/HySpecLab.git
     * version 0.7
 1. [Spectral](https://anaconda.org/conda-forge/spectral)
     * version 0.22
+1. [PySpTools](https://pypi.org/project/pysptools/)
+    * For Endmember Extraction Algorithms.
+    * version 0.15
+
 1. Others:
     * Matplotlib, tensorboard, tqdm...
 
@@ -53,6 +57,8 @@ TODO
 ## TODO
 - [ ] Setup library.
 - [ ] Fix HyperSpectralUnderSampler.
-- [*] Use [VCA](https://github.com/Laadr/VCA.git) as endmember extraction algorithm.
+- [x] Use [VCA](https://github.com/Laadr/VCA.git) as endmember extraction algorithm.
 - [ ] Extensive testing of the VCA with the original code.
+- [ ] UnDIP documentation.
+- [ ] NFINDR implementation based on pysptools. Básicamente para cargarme la dependencia a PySpTools.
 - [ ] Experimenting with UnDIP with different data transformation.

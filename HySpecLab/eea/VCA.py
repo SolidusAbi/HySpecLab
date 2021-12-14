@@ -106,7 +106,7 @@ class VCA(EEA):
             Return the endmembers estimated from X.
         '''
         check_is_fitted(self)
-        return self.endmembers_
+        return self.endmembers_.T
 
 
     def _proj_subspace(self, X, d):
