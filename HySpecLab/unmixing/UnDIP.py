@@ -5,6 +5,7 @@ from torch.nn.modules import activation, linear
 from torch import nn, Tensor
 import torch
 
+
 def slide(iterable, size):
     '''
         Iterate through iterable using a sliding window of several elements.
@@ -109,9 +110,6 @@ class AutoEncoderConv(AutoEncoder):
             self.weight_init(m)
 
 
-from torch import Tensor
-from collections import OrderedDict
-
 class Level(nn.Module):
     def __init__(self, in_ch, btl_ch, out_ch, skip_channels = 0, dropout = True, 
                 batch_norm = True, deeper = None, **kwargs):
@@ -153,18 +151,35 @@ class UnDIP(nn.Module):
 
         Parameters
         ----------
-            in_channels
-            out_channels
-            skip_channels
+            n_endmembers: int
+                Number of endmembers to be induced from data.
+                
+            out_channels: int
+                The output channels from the prior, the previos SDAE
+
+            sdae_dims: list
+                Defines the 'prior' which is based on SDAE. SDAE dimensions input is the list of
+                dimensions occurring in a single stack e.g. [100, 10, 10, 5] will make the
+                and autoencoder with shape [100, 10, 10, 5, 10, 10, out_channels].
+
+            skip_channels: list, size = len(sdae_dims) - 1
+                Define skip connections in the different level of the SDAE.
+
+            activation_func: nn.Module, default = nn.ReLU(inplace=True)
+                Apply and activation function in each layer from SDAE.
+
+            reflection: bool, default=False
+                The padding in encode path is defined by a nn.ReflectionPad2d. If it is False, the padding is
+                based on 0 padding.
+
+            batch_norm: bool, default=True
+                Apply an nn.BatchNorm2d at the end of each layer.
 
         Reference
         ---------
             [1] UnDIP: Hyperspectral Unmixing Using Deep Image Prior (10.1109/TGRS.2021.3067802)
     '''
     def __init__(self, n_endmembers:int, out_channels:int, sdae_dims:list, skip_channels:list, **kwargs) -> None:
-        ''' 
-        
-        '''
         if not(isinstance(sdae_dims, list)) or not(isinstance(skip_channels, list)):
             raise ValueError('Parameters must be list')
 
