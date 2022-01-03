@@ -1,3 +1,6 @@
 [submodule "modules/IPDL"]
 	path = modules/IPDL
 	url = https://github.com/SolidusAbi/IPDL.git
+[submodule "modules/Sparse"]
+	path = modules/Sparse
+	url = https://github.com/SolidusAbi/Sparse.git
