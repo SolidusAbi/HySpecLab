@@ -4,3 +4,6 @@
 [submodule "modules/Sparse"]
 	path = modules/Sparse
 	url = https://github.com/SolidusAbi/Sparse.git
+[submodule "modules/SVDD"]
+	path = modules/SVDD
+	url = https://github.com/SolidusAbi/SVDD-Python.git
