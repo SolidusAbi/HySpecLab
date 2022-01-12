@@ -64,3 +64,7 @@ TODO
 - [ ] Experimenting with UnDIP with different data transformation.
 - [ ] Endmember extraction by SVDD
     - Proposed on [10.1109/IGARSS.2007.4423675](https://ieeexplore.ieee.org/document/4423675)
+
+## Task
+- [ ] Feature selection experiment
+    - Plastic dataset, algorithms and sparse representation test 
