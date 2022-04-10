@@ -1,9 +1,7 @@
 # Based on TorchIR implementation
-
 import torch 
 from torch import Tensor
 from torch.nn.modules.loss import _Loss
-
 
 class StableStd(torch.autograd.Function):    
     r'''
@@ -65,4 +63,4 @@ class NCC(_Loss):
 
     def forward(self, target: Tensor, pred: Tensor)-> Tensor:
         # Negative for minimization
-        return -ncc(target, pred)
+        return 1-ncc(target, pred)

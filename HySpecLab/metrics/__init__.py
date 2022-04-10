@@ -1,2 +1,3 @@
 # __init__.py
-from .cross_correlation import ncc, NCC
+from .CrossCorrelation import ncc, NCC
+from .TotalVariational import TotalVariationalReg
