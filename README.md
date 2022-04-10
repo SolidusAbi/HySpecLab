@@ -62,8 +62,10 @@ TODO
 - [ ] UnDIP documentation.
 - [ ] NFINDR implementation based on pysptools. Básicamente para cargarme la dependencia a PySpTools.
 - [ ] Experimenting with UnDIP with different data transformation.
-- [ ] Endmember extraction by SVDD
+- [x] Endmember extraction by SVDD
     - Proposed on [10.1109/IGARSS.2007.4423675](https://ieeexplore.ieee.org/document/4423675)
+- [ ] SparseWeightedFeatureSelector
+    - Move the KL implementation to Sparse library
 
 ## Task
 - [ ] Feature selection experiment
