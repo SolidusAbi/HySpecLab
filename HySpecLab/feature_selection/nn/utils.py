@@ -37,7 +37,7 @@ class Reconstruction():
                 loss = criterion(out, inputs) + 1e-5*reg_loss
                 loss_tr.append(loss.item())
 
-                if idx % 150 == 0:
+                if idx % 100 == 0:
                     epoch_iterator.set_postfix(tls="%.4f" % np.mean(loss_tr))
 
                     if tb_writer is not None:
