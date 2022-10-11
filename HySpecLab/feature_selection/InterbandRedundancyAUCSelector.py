@@ -65,7 +65,6 @@ class InterbandRedundacyAUCSelector(InterbandRedundancySelector):
             features_high_collinear = tuple(map(lambda x: self._clusterize(x, features_available), features_selected))
             #Update the features selected based on AUC estimation
             features_selected = [cluster[np.argmax(self.auc_[cluster])] for cluster in features_high_collinear]
-            print(features_selected)
             self.mask_[features_selected] = 1
             
             features_high_collinear = np.unique(np.concatenate(features_high_collinear))
