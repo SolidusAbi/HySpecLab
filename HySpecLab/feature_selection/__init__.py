@@ -1,3 +1,4 @@
 # __init__.py
 from .InterbandRedundancySelector import InterbandRedundancySelector
-from .InterbandRedundancyMISelector import InterbandRedundacyMutualInformationSelector 
+from .InterbandRedundancyMISelector import InterbandRedundacyMutualInformationSelector
+from .InterbandRedundancyAUCSelector import InterbandRedundacyAUCSelector
