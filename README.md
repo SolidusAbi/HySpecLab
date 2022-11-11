@@ -54,6 +54,8 @@ TODO
 ## Resources
 * [Conda Cheat Sheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf)
 
+* [SVDD](https://www.csie.ntu.edu.tw/~cjlin/papers/svdd.pdf)
+
 ## TODO
 - [ ] Setup library.
 - [ ] Fix HyperSpectralUnderSampler.
@@ -70,3 +72,6 @@ TODO
 ## Task
 - [ ] Feature selection experiment
     - Plastic dataset, algorithms and sparse representation test 
+- [ ] Subspace SVDD
+    - Quizás es la solución al mal performance que da el SVDD como eea pero... puedes ser demasiado complejo.
+    - [Paper](https://arxiv.org/pdf/1802.03989.pdf)

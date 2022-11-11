@@ -108,28 +108,6 @@ class VCA(EEA):
         check_is_fitted(self)
         return self.endmembers_.T
 
-
-    def _proj_subspace(self, X, d):
-        '''
-            Project data onto a subspace d. This method uses SVD. SVD and PCA are
-            also equal in the case of zero-mean data.
-
-            Params
-            -----
-            X : array, shape (n_features, n_samples)
-                Data that will be projected in the subspace d.
-
-            d : int
-                Space where the zero-mean data will be projected.
-
-            Return
-            ------
-                (Data projected onto subspace d, Tranform matrix which project data onto d-space).
-        '''
-        _, N = X.shape
-        Ud  = splin.svd(np.dot(X,X.T)/float(N))[0][:,:d]    # computes the d-projection matrix 
-        return (np.dot(Ud.T, X), Ud)
-
     def _snr_estimation(self, X, Xp) -> float:
         '''
             SNR estimation following the equation from [1].

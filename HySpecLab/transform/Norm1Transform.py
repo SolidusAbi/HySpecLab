@@ -7,7 +7,7 @@ class Norm1Transform(TransformerMixin, BaseEstimator):
         X is noramlized in order to have 1-Normed vector space, i.e, the samples
         are normalized in order the Norm ||X|| is 1.
     '''
-    def __init__(self, n_features_to_select=None):
+    def __init__(self):
         super(Norm1Transform, self).__init__()
 
     def fit(self, X, y=None):
