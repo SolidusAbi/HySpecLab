@@ -16,8 +16,9 @@ class VCA(EEA):
             [1] Nascimento, J. M., & Dias, J. M. (2005). Vertex component analysis: A fast algorithm to unmix 
             hyperspectral data. IEEE transactions on Geoscience and Remote Sensing, 43(4), 898-910.
     '''
-    def __init__(self, n_endmembers:int):
+    def __init__(self, n_endmembers:int, snr_input: float=0):
         super(VCA, self).__init__(n_endmembers)
+        self.snr_input = snr_input
 
     def fit(self, X, y=None):
         '''
@@ -44,15 +45,14 @@ class VCA(EEA):
         if (self.n_endmembers<0 or self.n_endmembers>L):
             raise ValueError('Number of endmemembers parameter must be integer between 1 and L')
 
-        # Compute SNR input using
         X0 = X_ - np.mean(X_,axis=1,keepdims=True)  # zero-mean data 
         X0_p, Ud = self._proj_subspace(X0, self.n_endmembers)
-
-        snr_input = self._snr_estimation(X_,X0_p)
+        if self.snr_input == 0:
+            # Compute SNR input using
+            self.snr_input = self._snr_estimation(X_,X0_p)
 
         snr_thr = 15 + 10*np.log10(self.n_endmembers) # Thresold proposed in [1]
-
-        if snr_input < snr_thr:
+        if self.snr_input < snr_thr:
             # Projection to R-1 using zero-mean data
             d = self.n_endmembers - 1
 
