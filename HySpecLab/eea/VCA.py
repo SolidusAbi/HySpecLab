@@ -16,9 +16,10 @@ class VCA(EEA):
             [1] Nascimento, J. M., & Dias, J. M. (2005). Vertex component analysis: A fast algorithm to unmix 
             hyperspectral data. IEEE transactions on Geoscience and Remote Sensing, 43(4), 898-910.
     '''
-    def __init__(self, n_endmembers:int, snr_input: float=0):
+    def __init__(self, n_endmembers:int, snr_input: float=0, random_state=None):
         super(VCA, self).__init__(n_endmembers)
         self.snr_input = snr_input
+        self.random_state = random_state
 
     def fit(self, X, y=None):
         '''
@@ -84,8 +85,10 @@ class VCA(EEA):
         A = np.zeros((self.n_endmembers,self.n_endmembers))
         A[-1,0] = 1
 
+        rng = np.random.RandomState(self.random_state)
         for i in range(self.n_endmembers):
-            w = np.random.rand(self.n_endmembers,1)
+            w = rng.rand(self.n_endmembers,1)
+            # w = np.random.rand(self.n_endmembers,1)
             f = w - np.dot(A,np.dot(splin.pinv(A),w))
             f = f / splin.norm(f)
             
