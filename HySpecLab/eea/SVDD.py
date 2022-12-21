@@ -3,8 +3,6 @@ from imblearn.under_sampling import NearMiss
 import numpy as np
 from . import EEA
 
-from SVDD import BaseSVDD
-
 class SVDD(EEA):
     '''
         Support Vector Data Descriptor (SVDD) to extract a set of endmembers 
@@ -13,7 +11,6 @@ class SVDD(EEA):
         This implementation uses Radial Basis Function (RBF) as kernel in SVDD. 
         The sigma controls how tightly the SVDD models the support boundaries.
     '''
-
     def __init__(self, sigma: float, d:int, n_samples: int, C=100.0) -> None:
         '''
             Parameters
@@ -48,12 +45,14 @@ class SVDD(EEA):
             Parameters
             ----------
         '''
+        from SVDD import BaseSVDD
+        if y is not None:
+            sampling_strategy = {class_id:self.n_samples for class_id in np.unique(y)}
+            nm = NearMiss(sampling_strategy=sampling_strategy, version=1)
 
-        sampling_strategy = {class_id:self.n_samples for class_id in np.unique(y)}
-        nm = NearMiss(sampling_strategy=sampling_strategy, version=1)
+            X_resampled, _ = nm.fit_resample(X, y)
 
-        X_resampled, _ = nm.fit_resample(X, y)
-
+        X_resampled = X
         Xd, Ud = self._proj_subspace(X_resampled.T, self.d)
 
         svdd = BaseSVDD(C=self.C, gamma=self.sigma, kernel='rbf', display='off')
