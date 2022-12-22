@@ -10,4 +10,4 @@ class UnmixingLoss(_Loss):
         self.reduction = torch.mean if reduction == 'mean' else torch.sum
 
     def forward(self, input, target):
-        return self.reduction(torch.norm(target-input, dim=1))
+        return self.reduction(.5*torch.norm(target-input, dim=1).pow(2))
