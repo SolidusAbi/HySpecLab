@@ -8,7 +8,7 @@ class SimilarityLoss(_Loss):
         self.temperature = temperature
         self.n_endmembers = n_endmembers
 
-    def forward(self, X):
+    def forward(self, X:torch.Tensor) -> torch.Tensor:
         '''
             Parameters
             ----------

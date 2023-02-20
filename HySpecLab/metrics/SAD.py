@@ -1,30 +1,35 @@
 import torch
 from torch import Tensor
-from torch.nn.functional import hardtanh
+from torch.nn.functional import normalize
 from torch.nn.modules.loss import _Loss
 
-# def sad(x: Tensor, y: Tensor, n_bands: int) -> Tensor:
+# def sad(x: Tensor, y: Tensor) -> Tensor:
 #     r'''
 #       Parameters
 #       ----------
 #         x: Tensor, shape (batch_size, n_bands)          
-#         y: Tensor, shape (batch_size, n_bands)
+#         y: Tensor, shape (n_signals, n_bands)
 
 #       Returns
 #       -------
 #         Tensor, shape (batch_size,)
 #           Angle between the input and the target
 #     ''' 
-#     inputs_norm = torch.norm(x, dim=1)
-#     targets_norm = torch.norm(y, dim=1)
+#     bs, n_bands = x.shape
+#     y = y.expand(bs, -1, -1)
 
-#     summation = torch.bmm(x.view(-1, 1, n_bands), y.view(-1, n_bands, 1)).squeeze()
+#     targets_norm = torch.norm(y, dim=2)
+#     inputs_norm = torch.norm(x, dim=1).unsqueeze(1).expand_as(targets_norm)
+
+#     summation = torch.bmm(x.view(bs, 1, n_bands), torch.transpose(y, 1, 2)).squeeze()
 
 #     # Using Hard Tanh to force values between [-1, 1] because $cos^{-1}(x)$ where $x \in [-1,1]$
 #     return torch.acos(hardtanh(summation / (inputs_norm * targets_norm)))
 
 def sad(x: Tensor, y: Tensor) -> Tensor:
     r'''
+      Spectral Angle Distance (SAD)
+      
       Parameters
       ----------
         x: Tensor, shape (batch_size, n_bands)          
@@ -35,16 +40,14 @@ def sad(x: Tensor, y: Tensor) -> Tensor:
         Tensor, shape (batch_size,)
           Angle between the input and the target
     ''' 
+    x = normalize(x, dim=1)
+    y = normalize(y, dim=1) 
+
     bs, n_bands = x.shape
     y = y.expand(bs, -1, -1)
 
-    targets_norm = torch.norm(y, dim=2)
-    inputs_norm = torch.norm(x, dim=1).unsqueeze(1).expand_as(targets_norm)
-
     summation = torch.bmm(x.view(bs, 1, n_bands), torch.transpose(y, 1, 2)).squeeze()
-
-    # Using Hard Tanh to force values between [-1, 1] because $cos^{-1}(x)$ where $x \in [-1,1]$
-    return torch.acos(hardtanh(summation / (inputs_norm * targets_norm)))
+    return torch.acos(summation) 
 
 
 class SAD(_Loss):
