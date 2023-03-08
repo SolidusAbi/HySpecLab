@@ -1,5 +1,4 @@
 from sklearn.utils.validation import check_is_fitted
-from imblearn.under_sampling import NearMiss
 import numpy as np
 from . import EEA
 
@@ -46,6 +45,8 @@ class SVDD(EEA):
             ----------
         '''
         from SVDD import BaseSVDD
+        from imblearn.under_sampling import NearMiss
+
         if y is not None:
             sampling_strategy = {class_id:self.n_samples for class_id in np.unique(y)}
             nm = NearMiss(sampling_strategy=sampling_strategy, version=1)
