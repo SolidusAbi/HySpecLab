@@ -1,6 +1,7 @@
+import torch
 from torch.nn.functional import mse_loss
 
-def rmse(x: torch.Tensor, y: torch.Tensor):
+def rmse(x: torch.Tensor, y: torch.Tensor, dim=1):
     '''
         Root Mean Squared Error (RMSE)
 
@@ -11,5 +12,9 @@ def rmse(x: torch.Tensor, y: torch.Tensor):
 
             y: torch.Tensor, shape (batch_size, n_bands)
                 target tensor.
+            
+            dim: int
+                dimension to compute the mean. if 'None' the mean 
+                is computed over all the elements.
     '''
-    return torch.sqrt(mse_loss(x, y, reduction='none').mean(dim=1))
+    return torch.sqrt(mse_loss(x, y, reduction='none').mean(dim))

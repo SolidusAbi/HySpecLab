@@ -5,3 +5,4 @@ from .SAD import sad, SAD
 from .SID import sid, SID
 from .UnmixingLoss import UnmixingLoss
 from .NormalizedEntropy import NormalizedEntropy
+from .RMSE import rmse
