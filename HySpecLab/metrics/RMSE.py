@@ -17,4 +17,8 @@ def rmse(x: torch.Tensor, y: torch.Tensor, dim=1):
                 dimension to compute the mean. if 'None' the mean 
                 is computed over all the elements.
     '''
-    return torch.sqrt(mse_loss(x, y, reduction='none').mean(dim))
+    mse = mse_loss(x, y, reduction='none')
+    if dim is None:
+        return torch.sqrt(mse.mean())
+    else:
+        return torch.sqrt(mse.mean(dim))
