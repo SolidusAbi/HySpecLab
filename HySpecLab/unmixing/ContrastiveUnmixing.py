@@ -6,12 +6,65 @@ from torch.nn.functional import softmax, normalize
 from .mixture import lmm
 from .utils import slide
 
-class ContrastiveUnmixing(nn.Module):
-    def __init__(self, n_bands, n_endmembers, encode_layers=[512, 128, 32], endmember_init=None, sparsity=0.) -> None:
-        super(ContrastiveUnmixing, self).__init__()      
-        encode_layers = [n_bands] + encode_layers
+import numpy as np
+import torch
+
+from torch.nn import Parameter
+from torch.nn import functional as F
+
+    
+class GaussianSparseness(nn.Linear):
+    def __init__(self, in_features: int, sigma:float=.5) -> None:
+        super(GaussianSparseness, self).__init__(in_features, 1, True)
+        self.sigma = sigma
+        self.__mu = None
+        self.bias.data.fill_(0)
+
+    def forward(self, x):
+        self.__mu = F.sigmoid(F.linear(x, self.weight, self.bias)) 
+        eps = self.sigma * torch.normal(0, torch.ones_like(self.__mu)) * self.training
+        prob = self.__mu + eps
+        return F.hardtanh(prob, 0, 1)
+    
+    def regularize(self):
+        r'''
+            The expected regularization is the sum of the probabilities 
+            that the gates are active
+        '''
+        # return torch.mean(self._guassian_cdf(1-self.__mu, self.sigma))
+        return torch.mean(self._guassian_cdf(self.__mu, self.sigma))
         
+    def _guassian_cdf(self, mu:torch.Tensor, sigma:float) -> torch.Tensor:
+        r''' 
+            Guassian CDF
+            
+            Based on: https://stackoverflow.com/questions/809362/how-to-calculate-cumulative-normal-distribution
+
+            Parameters
+            ----------
+            mu: torch.Tensor, shape (in_features,)
+                The mean of the Guassian
+            
+            sigma: float
+                The standard deviation of the Guassian
+        '''
+        # return .5 * (1 + torch.erf(mu / (sigma*np.sqrt(2))))
+        return .5 * torch.erf(mu / (sigma*np.sqrt(2)))
+    
+    def variational_parameter(self):
+        return self.__mu
+    
+    def __repr__(self):
+        return f'GaussianSparseness(in_features={self.in_features}, sigma={self.sigma:.2f})'
+
+class ContrastiveUnmixing(nn.Module):
+    def __init__(self, n_bands, n_endmembers, encode_layers=[512, 128, 32], endmember_init=None, sigma_sparsity=0.5) -> None:
+        super(ContrastiveUnmixing, self).__init__()
+        assert 0 < sigma_sparsity < 1, "Sigma sparsity must be in the range (0, 1)"
+                
         # Encoder
+        encode_layers = [n_bands] + encode_layers
+
         encoder = []
         for idx, test in enumerate(slide(encode_layers, 2)):
             encoder.append(self.__encode_layer(*test, dropout=True if idx < len(encode_layers)-2 else False))
@@ -22,23 +75,21 @@ class ContrastiveUnmixing(nn.Module):
         if endmember_init is not None:
             self.ebk.data = endmember_init
 
-        self.sparse = torch.tensor(sparsity)
+        # Sparsity measure
+        self.sparse_gate = GaussianSparseness(encode_layers[-1], sigma=sigma_sparsity)
         
         # Projection layer
-        self.projection = nn.Sequential(
-            nn.Linear(encode_layers[-1], 64, bias=True),
-            nn.BatchNorm1d(64),
-            nn.Linear(64, n_bands, bias=False),
-            # nn.BatchNorm1d(n_bands, affine=True),
-        )
-        
+        self.projection = nn.Linear(encode_layers[-1], n_bands, bias=False) 
+
         # Abundance matrix
         self.A = None
 
     def forward(self, input: torch.Tensor) -> torch.Tensor:
-        r0 = self.projection( self.encoder(input) )
+        z = self.encoder(input)
+        r0 = self.projection(z)
+        sparse = self.sparse_gate(z)
 
-        self.A = self.__similarity(r0)
+        self.A = self.__similarity(r0, sparse)
         return lmm(softmax(self.A, dim=1), torch.sigmoid(self.ebk))
 
     def __encode_layer(self, in_features, out_features, dropout=False):
@@ -48,7 +99,7 @@ class ContrastiveUnmixing(nn.Module):
             *[nn.ReLU(), nn.Dropout(0.5)] if dropout else [nn.Identity()]
         )
 
-    def __similarity(self, X: torch.Tensor) -> torch.Tensor:
+    def __similarity(self, X: torch.Tensor, sparse:torch.Tensor) -> torch.Tensor:
         '''
             Cosine similarity between input and endmember bank.
 
@@ -63,6 +114,5 @@ class ContrastiveUnmixing(nn.Module):
         normalize_ebk = normalize(self.ebk.detach(), dim=1).expand(bs, -1, -1)
         cos = torch.bmm(X.view(bs, 1, n_bands), torch.transpose(normalize_ebk, 1, 2)).squeeze()
         v = (cos*.5) + .5
-        return torch.exp(self.sparse)*torch.log(v/ (1-v))
-
-        
+        eps = 1e-12
+        return (1 + eps)/(sparse + eps)*torch.log(v/ (1-v))
