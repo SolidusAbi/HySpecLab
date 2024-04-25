@@ -18,10 +18,11 @@ class GaussianSparseness(nn.Linear):
         super(GaussianSparseness, self).__init__(in_features, 1, True)
         self.sigma = sigma
         self.__mu = None
+        nn.init.xavier_normal_(self.weight, gain=.1)
         self.bias.data.fill_(0)
 
     def forward(self, x):
-        self.__mu = F.sigmoid(F.linear(x, self.weight, self.bias)) 
+        self.__mu = torch.sigmoid(F.linear(x, self.weight, self.bias))
         eps = self.sigma * torch.normal(0, torch.ones_like(self.__mu)) * self.training
         prob = self.__mu + eps
         return F.hardtanh(prob, 0, 1)
@@ -34,7 +35,7 @@ class GaussianSparseness(nn.Linear):
         # return torch.mean(self._guassian_cdf(1-self.__mu, self.sigma))
         return torch.mean(self._guassian_cdf(self.__mu, self.sigma))
         
-    def _guassian_cdf(self, mu:torch.Tensor, sigma:float) -> torch.Tensor:
+    def _guassian_cdf(self, x:torch.Tensor, sigma:float) -> torch.Tensor:
         r''' 
             Guassian CDF
             
@@ -48,8 +49,10 @@ class GaussianSparseness(nn.Linear):
             sigma: float
                 The standard deviation of the Guassian
         '''
-        # return .5 * (1 + torch.erf(mu / (sigma*np.sqrt(2))))
-        return .5 * torch.erf(mu / (sigma*np.sqrt(2)))
+        mu = sigma + .1
+        return .5 * (1 + torch.erf((x - mu) / (sigma*np.sqrt(2))))
+        # return .5 * torch.erf(mu / (sigma*np.sqrt(2)))
+        # return torch.erf(mu / (sigma*np.sqrt(2)))
     
     def variational_parameter(self):
         return self.__mu
@@ -60,7 +63,7 @@ class GaussianSparseness(nn.Linear):
 class ContrastiveUnmixing(nn.Module):
     def __init__(self, n_bands, n_endmembers, encode_layers=[512, 128, 32], endmember_init=None, sigma_sparsity=0.5) -> None:
         super(ContrastiveUnmixing, self).__init__()
-        assert 0 < sigma_sparsity < 1, "Sigma sparsity must be in the range (0, 1)"
+        assert 0 <= sigma_sparsity <= 1, "Sigma sparsity must be in the range [0, 1]"
                 
         # Encoder
         encode_layers = [n_bands] + encode_layers
@@ -76,7 +79,7 @@ class ContrastiveUnmixing(nn.Module):
             self.ebk.data = endmember_init
 
         # Sparsity measure
-        self.sparse_gate = GaussianSparseness(encode_layers[-1], sigma=sigma_sparsity)
+        self.sparse_gate = GaussianSparseness(encode_layers[-1], sigma=sigma_sparsity) if sigma_sparsity != 0 else None
         
         # Projection layer
         self.projection = nn.Linear(encode_layers[-1], n_bands, bias=False) 
@@ -87,7 +90,7 @@ class ContrastiveUnmixing(nn.Module):
     def forward(self, input: torch.Tensor) -> torch.Tensor:
         z = self.encoder(input)
         r0 = self.projection(z)
-        sparse = self.sparse_gate(z)
+        sparse = self.sparse_gate(z) if self.sparse_gate is not None else torch.ones((len(r0), 1)).to(input.device)
 
         self.A = self.__similarity(r0, sparse)
         return lmm(softmax(self.A, dim=1), torch.sigmoid(self.ebk))
